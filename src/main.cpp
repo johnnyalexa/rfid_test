@@ -34,8 +34,11 @@
 MFRC522    RfChip   (SPI_MOSI, SPI_MISO, SPI_SCK, SPI_CS, MF_RESET);
 
 int main(void) {
+	SPI_Init();
+	Init_Uart();
+	
   printf("starting...\n");
-
+USART_Transmit('0');
   // Init. RC522 Chip
   RfChip.PCD_Init();
 
@@ -69,6 +72,12 @@ int main(void) {
     // Print Card type
     uint8_t piccType = RfChip.PICC_GetType(RfChip.uid.sak);
     printf("PICC Type: %s \n\r", RfChip.PICC_GetTypeName(piccType));
+	
+	_delay_ms(100);
+	RfChip.PCD_Authenticate(PICC_CMD_MF_AUTH_KEY_A,0,,RfChip.uid.uidByte);
+	
+	RfChip.MIFARE_Read();
+	
     _delay_ms(1000);
   }
 }
